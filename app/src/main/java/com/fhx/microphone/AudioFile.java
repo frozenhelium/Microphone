@@ -2,8 +2,10 @@ package com.fhx.microphone;
 
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Calendar;
 
 /**
  * Created by fhx on 2/2/16.
@@ -13,9 +15,21 @@ public class AudioFile {
     private int mBufferSize = 0;
     private PCMHeader mHeader;
 
-    public AudioFile(String fileName) throws IOException{
+    private String getFileName(){
+        // the number of milliseconds since Jan. 1, 1970, midnight GMT.
+        long now = Calendar.getInstance().getTime().getTime();
+
+        // convert to seconds
+        now = now/1000;
+
+        return "rec-"+String.valueOf(now)+".wav";
+    }
+
+    public AudioFile() throws IOException{
+
         mFile = new RandomAccessFile(
-                android.os.Environment.getExternalStorageDirectory() + "/" + fileName,
+                android.os.Environment.getExternalStorageDirectory() + File.separator
+                        + "Microphone" + File.separator + getFileName(),
                 "rw");
         mHeader = new PCMHeader();
     }
@@ -28,7 +42,6 @@ public class AudioFile {
     }
 
     public void write(byte[] buffer) throws IOException{
-        Log.v("AudioFile", "writing " + buffer.length + " bytes");
         mFile.write(buffer);
         mBufferSize += buffer.length;
     }
