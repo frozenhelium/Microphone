@@ -51,19 +51,30 @@ public class AudioRecorder {
                 @Override
                 public void onPeriodicNotification(AudioRecord recorder) {
                     recorder.read(mBuffer, 0, mBuffer.length);
+                    short currentMax = 0;
+                    short current = 0;
+                    for (int i=0, lim = mBuffer.length/2; i < lim; i+=2)
+                    {
+                        current = getShort(mBuffer[i], mBuffer[i+1]);
+                        currentMax = current > currentMax? current: currentMax;
+                    }
                     try{
                         if(recorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                             mAudioFile.write(mBuffer);
                             if(mNotifier != null){
                                 mNotifier.onPeriodicNotification(
-                                        Calendar.getInstance().getTimeInMillis()
-                                                - mRecordingStartTime);
+                                        Calendar.getInstance().getTimeInMillis() - mRecordingStartTime,
+                                        Math.abs(currentMax/8192f));
                             }
                         }
                     }
                     catch (IOException e){
                         Log.e("onPeriodicNotification", e.getMessage());
                     }
+                }
+
+                private short getShort(byte argB1, byte argB2){
+                    return (short)(argB1 | (argB2 << 8));
                 }
             });
             mRecorder.setPositionNotificationPeriod(mConfig.getFramePeriod());
@@ -102,7 +113,7 @@ public class AudioRecorder {
 
 
     public interface OnPeriodicNotificationListener{
-        void onPeriodicNotification(long recordDuration);
+        void onPeriodicNotification(long recordDuration, float amplitude);
     }
 
     private class AudioRecordConfig{
@@ -113,7 +124,7 @@ public class AudioRecorder {
         public int primaryMic;
         public int secondaryMic;
 
-        private static final int STORAGE_INTERVAL = 100;
+        private static final int STORAGE_INTERVAL = 50;
 
         public boolean isValid(){
             int minBufferSize = AudioRecord.getMinBufferSize(sampleRate,

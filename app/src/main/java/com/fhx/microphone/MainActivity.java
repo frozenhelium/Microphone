@@ -1,11 +1,14 @@
 package com.fhx.microphone;
 
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.File;
@@ -19,6 +22,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_default);
+        setSupportActionBar(toolbar);
+
+
         // Create the app directory
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
             Log.d("Microphone", "Failed to detect External Storage");
@@ -31,36 +38,51 @@ public class MainActivity extends AppCompatActivity {
 
         mAudioRecorder = new AudioRecorder();
         final TextView recTimerText = (TextView)findViewById(R.id.text_time);
-        final Button recBtn = (Button)findViewById(R.id.btn_record);
+        final RecordButton recBtn = (RecordButton)findViewById(R.id.btn_record);
         mAudioRecorder.setOnPeriodicNotificationListener(new AudioRecorder.OnPeriodicNotificationListener() {
             @Override
-            public void onPeriodicNotification(long recordDuration) {
+            public void onPeriodicNotification(long recordDuration, float amplitude) {
                 int sec = (int)(recordDuration/1000);
                 int min = sec/60;
                 sec = sec % 60;
-                recTimerText.setText(min + ":" + sec);
+                String formattedDuration = min + ":" + (sec < 10? ("0" + sec) : (""+sec));
+                recTimerText.setText(formattedDuration);
+                recBtn.setIndicatorLevel(amplitude);
             }
         });
         recBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mRecording){
+                if (!mRecording) {
                     try {
                         mAudioRecorder.startRecording();
                         mRecording = true;
-                        ((Button) v).setText("Stop Recording");
-                    }
-                    catch (IOException e){
+                        ((RecordButton) v).setIsRecording(true);
+                    } catch (IOException e) {
                         Log.e("MainActivity", e.getMessage());
                     }
-                }
-                else{
+                } else {
                     mAudioRecorder.stopRecording();
                     mRecording = false;
-                    ((Button)v).setText("Start Recording");
+                    ((RecordButton) v).setIsRecording(false);
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_settings){
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

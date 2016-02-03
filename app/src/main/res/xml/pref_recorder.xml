@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="44100"
+        android:entries="@array/pref_recorder_sample_rate_titles"
+        android:entryValues="@array/pref_recorder_sample_rate_values"
+        android:key="sample_rate"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_sample_rate" />
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_recorder_channel_config_titles"
+        android:entryValues="@array/pref_recorder_channel_config_values"
+        android:key="channel_config"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_channel_config" />
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_recorder_audio_source_titles"
+        android:entryValues="@array/pref_recorder_audio_source_values"
+        android:key="primary_audio_source"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_primary_audio_source" />
+
+    <ListPreference
+        android:defaultValue="0"
+        android:dependency="channel_config"
+        android:entries="@array/pref_recorder_audio_source_titles"
+        android:entryValues="@array/pref_recorder_audio_source_values"
+        android:key="secondary_audio_source"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_secondary_audio_source" />
+</PreferenceScreen>

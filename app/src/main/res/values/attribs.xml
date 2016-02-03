@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RecordButton">
+        <attr name="buttonColor" format="color" />
+        <attr name="buttonBorderColor" format="color" />
+        <attr name="levelIndicatorColor" format="color" />
+        <attr name="buttonRadius" format="dimension" />
+        <attr name="buttonBorderRadius" format="dimension" />
+        <attr name="buttonBorderWidth" format="dimension" />
+    </declare-styleable>
+</resources>
