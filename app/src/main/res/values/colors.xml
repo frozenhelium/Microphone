@@ -5,6 +5,8 @@
     <color name="colorPrimaryDark">#242424</color>
     <color name="colorAccent">#E74C3C</color>
     <color name="colorTextPrimary">#FFFFFF</color>
+    <color name="colorTextPrimaryDisabled">#88FFFFFF</color>
     <color name="colorText">@color/colorTextPrimary</color>
     <color name="colorTextSecondary">#AAFFFFFF</color>
+    <color name="colorTextSecondaryDisabled">#44FFFFFF</color>
 </resources>
