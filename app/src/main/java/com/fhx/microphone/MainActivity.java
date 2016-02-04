@@ -15,11 +15,14 @@ import java.io.File;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
-    private AudioRecorder mAudioRecorder;
+    private AudioRecorder mAudioRecorder = null;
     private boolean mRecording = false;
 
     private MenuItem mMenuItemSettings = null;
     private MenuItem mMenuItemRecordings = null;
+
+    private TextView mTextTimer = null;
+    private RecordButton mBtnRecord = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,22 +43,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        mAudioRecorder = new AudioRecorder(getApplicationContext());
-        final TextView recTimerText = (TextView)findViewById(R.id.text_time);
-        final RecordButton recBtn = (RecordButton)findViewById(R.id.btn_record);
-
-        mAudioRecorder.setOnPeriodicNotificationListener(new AudioRecorder.OnPeriodicNotificationListener() {
-            @Override
-            public void onPeriodicNotification(long recordDuration, float amplitude) {
-                int sec = (int)(recordDuration/1000);
-                int min = sec/60;
-                sec = sec % 60;
-                String formattedDuration = min + ":" + (sec < 10? ("0" + sec) : (""+sec));
-                recTimerText.setText(formattedDuration);
-                recBtn.setIndicatorLevel(amplitude);
-            }
-        });
-        recBtn.setOnClickListener(new View.OnClickListener() {
+        createAudioRecorderInstance();
+        mTextTimer = (TextView)findViewById(R.id.text_time);
+        mBtnRecord = (RecordButton)findViewById(R.id.btn_record);
+        mBtnRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!mRecording) {
@@ -103,5 +94,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mAudioRecorder.release();
+    }
+
+    private void createAudioRecorderInstance(){
+        if(mAudioRecorder != null){
+            if(mAudioRecorder.isRecording()){
+                mAudioRecorder.stopRecording();
+            }
+            mAudioRecorder.release();
+            mAudioRecorder = null;
+        }
+        mAudioRecorder = new AudioRecorder(this);
+        mAudioRecorder.setOnPeriodicNotificationListener(new AudioRecorder.OnPeriodicNotificationListener() {
+            @Override
+            public void onPeriodicNotification(long recordDuration, float amplitude) {
+                int sec = (int)(recordDuration/1000);
+                int min = sec/60;
+                sec = sec % 60;
+                String formattedDuration = min + ":" + (sec < 10? ("0" + sec) : (""+sec));
+                mTextTimer.setText(formattedDuration);
+                mBtnRecord.setIndicatorLevel(amplitude);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        // quick and ugly fix to apply preference changes
+        createAudioRecorderInstance();
+        super.onResume();
     }
 }

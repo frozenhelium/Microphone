@@ -106,6 +106,10 @@ public class AudioRecorder {
         }
     }
 
+    public boolean isRecording(){
+        return mRecorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING;
+    }
+
     public void release(){
         mRecorder.release();
     }
