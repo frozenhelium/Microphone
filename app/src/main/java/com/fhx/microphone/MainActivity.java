@@ -1,7 +1,12 @@
 package com.fhx.microphone;
 
+import android.app.Application;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mAudioRecorder.release();
+        if(mAudioRecorder != null) mAudioRecorder.release();
     }
 
     private void createAudioRecorderInstance(){
@@ -104,18 +109,56 @@ public class MainActivity extends AppCompatActivity {
             mAudioRecorder.release();
             mAudioRecorder = null;
         }
-        mAudioRecorder = new AudioRecorder(this);
-        mAudioRecorder.setOnPeriodicNotificationListener(new AudioRecorder.OnPeriodicNotificationListener() {
-            @Override
-            public void onPeriodicNotification(long recordDuration, float amplitude) {
-                int sec = (int)(recordDuration/1000);
-                int min = sec/60;
-                sec = sec % 60;
-                String formattedDuration = min + ":" + (sec < 10? ("0" + sec) : (""+sec));
-                mTextTimer.setText(formattedDuration);
-                mBtnRecord.setIndicatorLevel(amplitude);
-            }
-        });
+        try {
+            mAudioRecorder = new AudioRecorder(this);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        if(mAudioRecorder == null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Microphone: Fatal Exception");
+            builder.setMessage("failed to create AudioRecord instance, "
+                    + "this might be due to invalid settings\n"
+                    + "Do you want to reset the settings and try again?");
+            builder.setInverseBackgroundForced(true);
+            builder.setCancelable(false);
+            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // Reset the preferences to default values
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor preferenceEditor = preferences.edit();
+                    preferenceEditor.clear();
+                    preferenceEditor.commit();
+
+                    // relaunch the activity
+                    Intent intent = getBaseContext().getPackageManager()
+                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    finish();
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    finish();
+                    System.exit(1);
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        } else {
+            mAudioRecorder.setOnPeriodicNotificationListener(new AudioRecorder.OnPeriodicNotificationListener() {
+                @Override
+                public void onPeriodicNotification(long recordDuration, float amplitude) {
+                    int sec = (int) (recordDuration / 1000);
+                    int min = sec / 60;
+                    sec = sec % 60;
+                    String formattedDuration = min + ":" + (sec < 10 ? ("0" + sec) : ("" + sec));
+                    mTextTimer.setText(formattedDuration);
+                    mBtnRecord.setIndicatorLevel(amplitude);
+                }
+            });
+        }
     }
 
     @Override

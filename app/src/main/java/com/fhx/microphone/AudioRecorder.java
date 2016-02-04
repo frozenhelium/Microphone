@@ -141,6 +141,26 @@ public class AudioRecorder {
         void onPeriodicNotification(long recordDuration, float amplitude);
     }
 
+    public static boolean isSampleRateSupported(int sampleRate){
+        // PCM 16 bit per sample is guaranteed to be supported by devices.
+        return isSupportedConfig(sampleRate, AudioFormat.CHANNEL_IN_DEFAULT,
+                AudioFormat.ENCODING_PCM_16BIT);
+    }
+
+    public static boolean isStereoRecordingSupported(){
+        // 44100Hz is currently the only rate that is guaranteed to work on all device
+        return isSupportedConfig(44100, AudioFormat.CHANNEL_IN_STEREO,
+                AudioFormat.ENCODING_PCM_16BIT);
+    }
+
+    public static boolean isSupportedConfig(int sampleRate, int channelConfig, int format){
+        int minBufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, format);
+        if(minBufferSize == AudioRecord.ERROR || minBufferSize == AudioRecord.ERROR_BAD_VALUE) {
+            return false;
+        }
+        return true;
+    }
+
     private class AudioRecordConfig{
         public int numChannels;
         public int sampleRate;
