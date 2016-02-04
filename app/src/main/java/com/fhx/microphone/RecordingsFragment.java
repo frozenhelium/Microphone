@@ -23,7 +23,7 @@ public class RecordingsFragment extends Fragment {
         recyclerView.setClickable(true);
         layoutManager = new LinearLayoutManager(rootView.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new FileAdapter();
+        RecyclerView.Adapter adapter = new FileAdapter(getContext());
         recyclerView.setAdapter(adapter);
         return rootView;
     }
