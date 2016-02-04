@@ -17,6 +17,10 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
     private AudioRecorder mAudioRecorder;
     private boolean mRecording = false;
+
+    private MenuItem mMenuItemSettings = null;
+    private MenuItem mMenuItemRecordings = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +40,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        mAudioRecorder = new AudioRecorder();
+        mAudioRecorder = new AudioRecorder(getApplicationContext());
         final TextView recTimerText = (TextView)findViewById(R.id.text_time);
         final RecordButton recBtn = (RecordButton)findViewById(R.id.btn_record);
+
         mAudioRecorder.setOnPeriodicNotificationListener(new AudioRecorder.OnPeriodicNotificationListener() {
             @Override
             public void onPeriodicNotification(long recordDuration, float amplitude) {
@@ -58,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
                         mAudioRecorder.startRecording();
                         mRecording = true;
                         ((RecordButton) v).setIsRecording(true);
+                        if(mMenuItemRecordings != null)  mMenuItemRecordings.setEnabled(false);
+                        if(mMenuItemSettings != null) mMenuItemSettings.setEnabled(false);
                     } catch (IOException e) {
                         Log.e("MainActivity", e.getMessage());
                     }
@@ -65,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                     mAudioRecorder.stopRecording();
                     mRecording = false;
                     ((RecordButton) v).setIsRecording(false);
+                    if(mMenuItemRecordings != null)  mMenuItemRecordings.setEnabled(true);
+                    if(mMenuItemSettings != null) mMenuItemSettings.setEnabled(true);
                 }
             }
         });
@@ -73,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        mMenuItemRecordings = menu.findItem(R.id.action_recordings);
+        mMenuItemSettings = menu.findItem(R.id.action_settings);
         return true;
     }
 
@@ -80,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_settings){
             startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        } else if(item.getItemId() == R.id.action_recordings){
+            startActivity(new Intent(this, RecordingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -9,7 +9,7 @@
 
     <item
         android:id="@+id/action_settings"
-        android:title="@string/title_action_recordings"
+        android:title="@string/title_action_settings"
         android:icon="@drawable/ic_action_settings"
         app:showAsAction="ifRoom"/>
 </menu>

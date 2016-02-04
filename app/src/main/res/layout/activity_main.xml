@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:textSize="80sp"
         android:fontFamily="sans-serif-thin"
-        android:textColor="@color/colorText"
+        android:textColor="@color/colorTextPrimary"
         android:text="0:00"
         android:layout_marginTop="30dp"
         android:layout_below="@+id/toolbar_default"

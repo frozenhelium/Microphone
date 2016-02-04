@@ -1,8 +1,11 @@
 package com.fhx.microphone;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -19,29 +22,49 @@ public class AudioRecorder {
     private long mRecordingStartTime;
     private OnPeriodicNotificationListener mNotifier = null;
 
+    private Context mContext;
+
     public void setOnPeriodicNotificationListener(OnPeriodicNotificationListener onPeriodicNotification) {
         mNotifier = onPeriodicNotification;
     }
 
-    public AudioRecorder(){
+    public AudioRecorder(Context context){
+        mContext = context;
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
         mConfig = new AudioRecordConfig();
-        mConfig.numChannels = 1;
-        mConfig.sampleRate = 44100;
+        mConfig.numChannels = Integer.valueOf(preferences.getString("channel_config", "1"));
+        mConfig.sampleRate = Integer.valueOf(preferences.getString("sample_rate", "44100"));
         mConfig.format = AudioFormat.ENCODING_PCM_16BIT;
-        mConfig.primaryMic = MediaRecorder.AudioSource.DEFAULT;
+
+        int audioSources[] = {
+                MediaRecorder.AudioSource.DEFAULT,
+                MediaRecorder.AudioSource.CAMCORDER,
+                MediaRecorder.AudioSource.MIC,
+                MediaRecorder.AudioSource.VOICE_CALL,
+                MediaRecorder.AudioSource.VOICE_COMMUNICATION,
+                MediaRecorder.AudioSource.VOICE_DOWNLINK,
+                MediaRecorder.AudioSource.VOICE_RECOGNITION,
+                MediaRecorder.AudioSource.VOICE_UPLINK
+        };
+        int audioSourceIndex = Integer.valueOf(preferences.getString("primary_audio_source", "0"));
+        if(mConfig.numChannels == 2) {
+            audioSourceIndex = Integer.valueOf(preferences.getString("secondary_audio_source", "1"));
+        }
+        mConfig.audioSource = audioSources[audioSourceIndex];
 
         if(mConfig.isValid()){
             mRecorder = new AudioRecord(
-                    mConfig.primaryMic,
+                    mConfig.audioSource,
                     mConfig.sampleRate,
-                    mConfig.numChannels==1? AudioFormat.CHANNEL_IN_MONO: AudioFormat.CHANNEL_IN_STEREO,
+                    mConfig.numChannels==2? AudioFormat.CHANNEL_IN_STEREO: AudioFormat.CHANNEL_IN_MONO,
                     mConfig.format,
                     mConfig.getBufferSize()
             );
             if(mRecorder.getState() == AudioRecord.STATE_UNINITIALIZED) {
                 Log.e("AudioRecorder", "failed to create AudioRecord instance");
             }
-
             mRecorder.setRecordPositionUpdateListener(new AudioRecord.OnRecordPositionUpdateListener() {
                 @Override
                 public void onMarkerReached(AudioRecord recorder) {
@@ -52,29 +75,27 @@ public class AudioRecorder {
                 public void onPeriodicNotification(AudioRecord recorder) {
                     recorder.read(mBuffer, 0, mBuffer.length);
                     short currentMax = 0;
-                    short current = 0;
-                    for (int i=0, lim = mBuffer.length/2; i < lim; i+=2)
-                    {
-                        current = getShort(mBuffer[i], mBuffer[i+1]);
-                        currentMax = current > currentMax? current: currentMax;
+                    short current;
+                    for (int i = 0, lim = mBuffer.length / 2; i < lim; i += 2) {
+                        current = getShort(mBuffer[i], mBuffer[i + 1]);
+                        currentMax = current > currentMax ? current : currentMax;
                     }
-                    try{
-                        if(recorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
+                    try {
+                        if (recorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                             mAudioFile.write(mBuffer);
-                            if(mNotifier != null){
+                            if (mNotifier != null) {
                                 mNotifier.onPeriodicNotification(
                                         Calendar.getInstance().getTimeInMillis() - mRecordingStartTime,
-                                        Math.abs(currentMax/8192f));
+                                        Math.abs(currentMax / 8192f));
                             }
                         }
-                    }
-                    catch (IOException e){
+                    } catch (IOException e) {
                         Log.e("onPeriodicNotification", e.getMessage());
                     }
                 }
 
-                private short getShort(byte argB1, byte argB2){
-                    return (short)(argB1 | (argB2 << 8));
+                private short getShort(byte argB1, byte argB2) {
+                    return (short) (argB1 | (argB2 << 8));
                 }
             });
             mRecorder.setPositionNotificationPeriod(mConfig.getFramePeriod());
@@ -97,7 +118,7 @@ public class AudioRecorder {
         mRecorder.startRecording();
         mRecordingStartTime = Calendar.getInstance().getTimeInMillis();
         // The periodic notification is triggered only after
-        // first appropriate read() call on API < 21
+        // first appropriate read() call
         mRecorder.read(mBuffer, 0, mBuffer.length);
     }
 
@@ -121,14 +142,18 @@ public class AudioRecorder {
         public int sampleRate;
         public int format;
 
+        public int audioSource;
+
+        @Deprecated // use audioSource instead
         public int primaryMic;
+        @Deprecated // use audioSource instead
         public int secondaryMic;
 
         private static final int STORAGE_INTERVAL = 50;
 
         public boolean isValid(){
             int minBufferSize = AudioRecord.getMinBufferSize(sampleRate,
-                    numChannels==1? AudioFormat.CHANNEL_IN_MONO: AudioFormat.CHANNEL_IN_STEREO,
+                    numChannels==2? AudioFormat.CHANNEL_IN_STEREO: AudioFormat.CHANNEL_IN_MONO,
                     format);
             if(minBufferSize == AudioRecord.ERROR || minBufferSize == AudioRecord.ERROR_BAD_VALUE){
                 return false;
@@ -137,14 +162,6 @@ public class AudioRecorder {
         }
 
         public int getBufferSize(){
-            /*int minBufferSize = AudioRecord.getMinBufferSize(sampleRate,
-                    numChannels==1? AudioFormat.CHANNEL_IN_MONO: AudioFormat.CHANNEL_IN_STEREO,
-                    format);
-            if(minBufferSize == AudioRecord.ERROR || minBufferSize == AudioRecord.ERROR_BAD_VALUE){
-                // maybe throw some error
-                return 0;
-            }*/
-
             return 2 * numChannels * this.getFramePeriod() * this.getSampleSize() / 8;
         }
 

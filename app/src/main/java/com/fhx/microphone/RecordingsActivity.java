@@ -1,23 +1,25 @@
 package com.fhx.microphone;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class SettingsActivity extends AppCompatActivity {
+/**
+ * Created by fhx on 2/4/16.
+ */
+public class RecordingsActivity extends AppCompatActivity {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_recordings);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_settings);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_recordings);
         setSupportActionBar(toolbar);
 
-        // Display the fragment as the main content.
         getFragmentManager().beginTransaction()
-                .replace(R.id.frame_content, new SettingsFragment())
+                .replace(R.id.frame_content_recordings, new RecordingsFragment())
                 .commit();
     }
 

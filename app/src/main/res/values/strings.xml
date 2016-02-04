@@ -39,10 +39,9 @@
     </string-array>
 
     <string-array name="pref_recorder_audio_source_titles">
-        <item>Camcorder</item>
         <item>Default</item>
+        <item>Camcorder</item>
         <item>Microphone</item>
-        <item>Remote Submix</item>
         <item>Voice Call</item>
         <item>Voice Communication</item>
         <item>Voice Downlink</item>
@@ -58,7 +57,6 @@
         <item>5</item>
         <item>6</item>
         <item>7</item>
-        <item>8</item>
     </string-array>
 
     <string name="pref_header_general">General</string>
