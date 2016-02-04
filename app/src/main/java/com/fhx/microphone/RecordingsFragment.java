@@ -1,6 +1,7 @@
 package com.fhx.microphone;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
  * Created by fhx on 2/4/16.
  */
 public class RecordingsFragment extends Fragment {
+    Context mContext = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recordings, container, false);
@@ -23,7 +26,7 @@ public class RecordingsFragment extends Fragment {
         recyclerView.setClickable(true);
         layoutManager = new LinearLayoutManager(rootView.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new FileAdapter(getContext());
+        RecyclerView.Adapter adapter = new FileAdapter(getActivity());
         recyclerView.setAdapter(adapter);
         return rootView;
     }
