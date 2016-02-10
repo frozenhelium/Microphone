@@ -19,14 +19,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/SettingsTheme"
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings">
-        </activity>
+            android:label="@string/title_activity_settings"
+            android:theme="@style/SettingsTheme"></activity>
         <activity
             android:name=".RecordingsActivity"
-            android:label="@string/title_activity_recordings">
-        </activity>
+            android:label="@string/title_activity_recordings"></activity>
+
+        <service
+            android:name=".AudioRecordingService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

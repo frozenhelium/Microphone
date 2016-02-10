@@ -20,11 +20,12 @@ public class AudioRecorder {
     private byte[] mBuffer;
     private AudioFile mAudioFile;
     private long mRecordingStartTime;
-    private OnPeriodicNotificationListener mNotifier = null;
+    private PeriodicNotificationListener mNotifier = null;
 
     private Context mContext;
 
-    public void setOnPeriodicNotificationListener(OnPeriodicNotificationListener onPeriodicNotification) {
+
+    public void setOnPeriodicNotificationListener(PeriodicNotificationListener onPeriodicNotification) {
         mNotifier = onPeriodicNotification;
     }
 
@@ -114,7 +115,7 @@ public class AudioRecorder {
         mRecorder.release();
     }
 
-    public void startRecording() throws IOException{
+    public String startRecording() throws IOException{
         mAudioFile = new AudioFile();
         mAudioFile.prepare((short) mConfig.numChannels,
                 mConfig.sampleRate,
@@ -124,9 +125,10 @@ public class AudioRecorder {
         // The periodic notification is triggered only after
         // first appropriate read() call
         mRecorder.read(mBuffer, 0, mBuffer.length);
+        return mAudioFile.getFileName();
     }
 
-    public void stopRecording(){
+    public String stopRecording(){
         mRecorder.stop();
         try {
             mAudioFile.close();
@@ -134,10 +136,11 @@ public class AudioRecorder {
         catch(IOException e){
             Log.e("AudioRecorder", e.getMessage());
         }
+        return mAudioFile.getFileName();
     }
 
 
-    public interface OnPeriodicNotificationListener{
+    public interface PeriodicNotificationListener{
         void onPeriodicNotification(long recordDuration, float amplitude);
     }
 

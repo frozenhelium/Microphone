@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/pref_header_general">
+    <!--<PreferenceCategory android:title="@string/pref_header_general">
         <SwitchPreference
             android:defaultValue="false"
             android:key="background_record_switch"
             android:summary="@string/pref_description_background_record"
             android:title="@string/pref_title_background_record" />
-    </PreferenceCategory>
+    </PreferenceCategory>-->
 
     <PreferenceCategory android:title="@string/pref_header_recorder">
         <ListPreference

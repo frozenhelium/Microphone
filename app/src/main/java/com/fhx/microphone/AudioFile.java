@@ -14,8 +14,9 @@ public class AudioFile {
     private RandomAccessFile mFile;
     private int mBufferSize = 0;
     private PCMHeader mHeader;
+    private String mFileName;
 
-    private String getFileName(){
+    private String getNewFileName(){
         // the number of milliseconds since Jan. 1, 1970, midnight GMT.
         long now = Calendar.getInstance().getTime().getTime();
 
@@ -25,12 +26,14 @@ public class AudioFile {
         return "rec-"+String.valueOf(now)+".wav";
     }
 
-    public AudioFile() throws IOException{
+    public String getFileName(){
+        return mFileName;
+    }
 
-        mFile = new RandomAccessFile(
-                android.os.Environment.getExternalStorageDirectory() + File.separator
-                        + "Microphone" + File.separator + getFileName(),
-                "rw");
+    public AudioFile() throws IOException{
+        mFileName = android.os.Environment.getExternalStorageDirectory() + File.separator
+                + "Microphone" + File.separator + getNewFileName();
+        mFile = new RandomAccessFile(mFileName, "rw");
         mHeader = new PCMHeader();
     }
 

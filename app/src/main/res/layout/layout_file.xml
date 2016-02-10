@@ -7,8 +7,7 @@
     android:padding="10dp">
     <ImageView
         android:id="@+id/file_icon"
-        android:src="@drawable/ic_record"
-        android:tint="@color/colorAccent"
+        android:src="@mipmap/ic_record_file"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
@@ -18,14 +17,13 @@
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/file_icon"
         android:textColor="@color/colorTextPrimary"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:text = "rec-1222032933.wav"/>
     <TextView
         android:id="@+id/file_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="raw wave audio file"
-        android:textSize="13sp"
         android:textColor="@color/colorTextSecondary"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/file_icon"

@@ -7,7 +7,7 @@
     <string name="title_action_settings">Settings</string>
 
     <!-- Strings related to Settings -->
-    <string name="pref_header_recorder">Recorder</string>
+    <string name="pref_header_recorder">Recorder Settings</string>
 
     <string name="pref_title_sample_rate">Audio sample rate</string>
     <string name="pref_title_channel_config">Channel configuration</string>
