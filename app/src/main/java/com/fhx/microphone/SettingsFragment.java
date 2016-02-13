@@ -7,6 +7,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 /**
  * Created by fhx on 2/4/16.
@@ -26,8 +27,15 @@ public class SettingsFragment extends PreferenceFragment {
                 Preference primaryAudioSource = findPreference("primary_audio_source");
                 Preference secondaryAudioSource = findPreference("secondary_audio_source");
                 if(strValue.equals("2")){
-                    primaryAudioSource.setEnabled(false);
-                    secondaryAudioSource.setEnabled(true);
+                    if(AudioRecorder.isStereoRecordingSupported()) {
+                        primaryAudioSource.setEnabled(false);
+                        secondaryAudioSource.setEnabled(true);
+                    } else {
+                        Toast.makeText(getActivity(),
+                                "Stereo recording is not supported in this device",
+                                Toast.LENGTH_LONG).show();
+                        return false;
+                    }
                 }else{
                     primaryAudioSource.setEnabled(true);
                     secondaryAudioSource.setEnabled(false);

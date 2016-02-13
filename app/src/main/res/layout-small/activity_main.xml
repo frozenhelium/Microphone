@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimaryLight"
+    tools:context="com.fhx.microphone.MainActivity">
+
+    <include
+        layout="@layout/toolbar_default"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/toolbar_default" />
+
+    <TextView
+        android:id="@+id/text_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="60sp"
+        android:fontFamily="sans-serif-thin"
+        android:textColor="@color/colorText"
+        android:text="0:00"
+        android:layout_marginTop="6dp"
+        android:layout_below="@+id/toolbar_default"
+        android:layout_centerHorizontal="true" />
+    
+    <com.fhx.microphone.RecordButton
+        android:id="@+id/btn_record"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:buttonRadius="16dp"
+        app:buttonBorderRadius="30dp"
+        app:buttonBorderWidth="2dp"
+        android:layout_marginBottom="6dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

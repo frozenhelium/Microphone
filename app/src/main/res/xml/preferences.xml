@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory
+        android:title="@string/pref_header_warning">
+        <Preference
+            android:summary="@string/pref_summary_warning"
+            android:key="warning" />
+    </PreferenceCategory>
+
     <!--<PreferenceCategory android:title="@string/pref_header_general">
         <SwitchPreference
             android:defaultValue="false"
@@ -46,5 +53,14 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_secondary_audio_source" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_header_about">
+        <Preference
+            android:title="@string/pref_title_about"
+            android:summary="@string/pref_summary_about"
+            android:key="warning" />
     </PreferenceCategory>
 </PreferenceScreen>
