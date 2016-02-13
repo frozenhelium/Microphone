@@ -3,6 +3,7 @@ package com.fhx.microphone;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,8 +27,17 @@ public class RecordingsFragment extends Fragment {
         recyclerView.setClickable(true);
         layoutManager = new LinearLayoutManager(rootView.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new FileAdapter(getActivity());
+        final FileAdapter adapter = new FileAdapter(getActivity());
         recyclerView.setAdapter(adapter);
+
+        FloatingActionButton a = (FloatingActionButton) rootView.findViewById(R.id.fabBtn);
+        a.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.onClickDelete();
+            }
+        });
+
         return rootView;
     }
 }

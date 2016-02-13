@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
-    android:padding="10dp">
+    android:background="@color/selector_recordings"
+    android:padding="10dp"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp">
     <ImageView
         android:id="@+id/file_icon"
         android:src="@mipmap/ic_record_file"
