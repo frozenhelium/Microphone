@@ -13,27 +13,31 @@
         android:layout_width="match_parent"
         android:id="@+id/toolbar_default" />
 
-    <TextView
-        android:id="@+id/text_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="60sp"
-        android:fontFamily="sans-serif-thin"
-        android:textColor="@color/colorText"
-        android:text="0:00"
-        android:layout_marginTop="6dp"
-        android:layout_below="@+id/toolbar_default"
-        android:layout_centerHorizontal="true" />
-    
-    <com.fhx.microphone.RecordButton
-        android:id="@+id/btn_record"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:buttonRadius="16dp"
-        app:buttonBorderRadius="30dp"
-        app:buttonBorderWidth="2dp"
-        android:layout_marginBottom="6dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?android:attr/actionBarSize"
+        android:weightSum="1"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/text_time"
+            android:layout_weight="0.3"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:textSize="60sp"
+            android:fontFamily="sans-serif-thin"
+            android:textColor="@color/colorText"
+            android:text="0:00"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_horizontal" />
+        <com.fhx.microphone.RecordButton
+            android:id="@+id/btn_record"
+            android:layout_weight="0.7"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:buttonRadius="16dp"
+            app:buttonBorderRadius="32dp"
+            app:buttonBorderWidth="2dp"/>
+    </LinearLayout>
 
 </RelativeLayout>
