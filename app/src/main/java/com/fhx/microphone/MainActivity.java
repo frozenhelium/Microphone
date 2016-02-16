@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.media.audiofx.BassBoost;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private AudioRecordingService mRecordingService;
     private ServiceConnection mRecordingServiceConnection;
 
+    private static final int SETTINGS_ACTIVITY_REQUEST_CODE = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Create the app directory
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            Log.d("Microphone", "Failed to detect External Storage");
+            Log.e("Microphone", "Failed to detect External Storage");
         } else {
             File appDir = new File(Environment.getExternalStorageDirectory()+File.separator+"Microphone");
             if(!appDir.exists()) {
@@ -75,17 +78,11 @@ public class MainActivity extends AppCompatActivity {
                 mRecordingService.setRecordingStopCallback(new AudioRecordingService.RecordingStopListener() {
                     @Override
                     public void onRecordingStop() {
-                        mRecording = false;
-                        mBtnRecord.setIsRecording(false);
-                        if (mMenuItemRecordings != null) mMenuItemRecordings.setEnabled(true);
-                        if (mMenuItemSettings != null) mMenuItemSettings.setEnabled(true);
+                        MainActivity.this.onRecordingStop();
                     }
                 });
                 if(mRecordingService.isRecording()) {
-                    mRecording = true;
-                    mBtnRecord.setIsRecording(true);
-                    if (mMenuItemRecordings != null) mMenuItemRecordings.setEnabled(false);
-                    if (mMenuItemSettings != null) mMenuItemSettings.setEnabled(false);
+                    MainActivity.this.onRecordingStart();
                 } else {
                     checkPreferencesValidity();
                 }
@@ -103,20 +100,28 @@ public class MainActivity extends AppCompatActivity {
                 Intent recordingServiceIntent = new Intent(MainActivity.this, AudioRecordingService.class);
                 if (!mRecording) {
                     recordingServiceIntent.setAction(AudioRecordingService.ACTION_START_RECORDING);
-                    mRecording = true;
-                    mBtnRecord.setIsRecording(true);
-                    if (mMenuItemRecordings != null) mMenuItemRecordings.setEnabled(false);
-                    if (mMenuItemSettings != null) mMenuItemSettings.setEnabled(false);
+                    MainActivity.this.onRecordingStart();
                 } else {
                     recordingServiceIntent.setAction(AudioRecordingService.ACTION_STOP_RECORDING);
-                    mRecording = false;
-                    mBtnRecord.setIsRecording(false);
-                    if (mMenuItemRecordings != null) mMenuItemRecordings.setEnabled(true);
-                    if (mMenuItemSettings != null) mMenuItemSettings.setEnabled(true);
+                    MainActivity.this.onRecordingStop();
                 }
                 startService(recordingServiceIntent);
             }
         });
+    }
+
+    private void onRecordingStart(){
+        mRecording = true;
+        mBtnRecord.setIsRecording(true);
+        if (mMenuItemRecordings != null) mMenuItemRecordings.setEnabled(false);
+        if (mMenuItemSettings != null) mMenuItemSettings.setEnabled(false);
+    }
+
+    private void onRecordingStop(){
+        mRecording = false;
+        mBtnRecord.setIsRecording(false);
+        if (mMenuItemRecordings != null) mMenuItemRecordings.setEnabled(true);
+        if (mMenuItemSettings != null) mMenuItemSettings.setEnabled(true);
     }
 
     @Override
@@ -139,9 +144,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == SETTINGS_ACTIVITY_REQUEST_CODE){
+            checkPreferencesValidity();
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_settings){
-            startActivity(new Intent(this, SettingsActivity.class));
+            startActivityForResult(new Intent(this, SettingsActivity.class),
+                    SETTINGS_ACTIVITY_REQUEST_CODE);
             return true;
         } else if(item.getItemId() == R.id.action_recordings){
             startActivity(new Intent(this, RecordingsActivity.class));
@@ -207,12 +221,5 @@ public class MainActivity extends AppCompatActivity {
             mAudioRecorder.release();
             mAudioRecorder = null;
         }
-    }
-
-    @Override
-    protected void onResume() {
-        // quick and ugly fix to apply preference changes
-        checkPreferencesValidity();
-        super.onResume();
     }
 }

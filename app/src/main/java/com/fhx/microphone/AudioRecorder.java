@@ -87,7 +87,7 @@ public class AudioRecorder {
                             if (mNotifier != null) {
                                 mNotifier.onPeriodicNotification(
                                         Calendar.getInstance().getTimeInMillis() - mRecordingStartTime,
-                                        Math.abs(currentMax / 8192f));
+                                        Math.abs(currentMax / 32768f));
                             }
                         }
                     } catch (IOException e) {
