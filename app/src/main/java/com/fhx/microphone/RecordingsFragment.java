@@ -1,7 +1,9 @@
 package com.fhx.microphone;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,8 +22,8 @@ public class RecordingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recordings, container, false);
-        RecyclerView recyclerView;
-        RecyclerView.LayoutManager layoutManager;
+        final RecyclerView recyclerView;
+        final RecyclerView.LayoutManager layoutManager;
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view_recordings);
         recyclerView.setHasFixedSize(true);
         recyclerView.setClickable(true);
@@ -30,11 +32,44 @@ public class RecordingsFragment extends Fragment {
         final FileAdapter adapter = new FileAdapter(getActivity());
         recyclerView.setAdapter(adapter);
 
-        FloatingActionButton a = (FloatingActionButton) rootView.findViewById(R.id.fabBtn);
+        final FloatingActionButton a = (FloatingActionButton) rootView.findViewById(R.id.fabBtn);
         a.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapter.onClickDelete();
+                String A;
+                if(adapter.returnSelectedNames().size()==1){
+                    A = "the file " + adapter.returnSelectedNames().get(0)+"?";
+                }
+                else {
+                    A = adapter.returnSelectedNames().size() + " files?";
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Are you sure you want to delete "+A);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        adapter.onClickDelete();
+                        adapter.notifyDataSetChanged();
+                        adapter.setAllUnselected();
+                        int a = adapter.getItemCount();
+                        Log.d("Whatttttt??  ", "onClick: " + a);
+                        for (int i = 0; i < a; i++) {
+                            layoutManager.getChildAt(i).setSelected(false);
+                        }
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Clear Selections
+                        adapter.setAllUnselected();
+                        for (int i = 0; i < adapter.getItemCount(); i++) {
+                            layoutManager.getChildAt(i).setSelected(false);
+                        }
+                    }
+                });
+                builder.show();
             }
         });
 

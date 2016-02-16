@@ -69,13 +69,22 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             boolean delete = a.delete();
             Log.d("This : ", strings.get(i) + delete);
         }
+        loadFileNames();
+    }
+
+    public void setAllUnselected(){
+        for(int i = 0;i<=getItemCount();i++){
+            isDuringSelection.set(i,false);
+        }
+
     }
 
     public void loadFileNames(){
 
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
             Log.e("Microphone", "Failed to detect External Storage");
-        } else {
+        }
+        else {
             File appDir = new File(Environment.getExternalStorageDirectory()+File.separator+"Microphone");
             if(appDir.exists()) {
                 FilenameFilter wavFilter = new FilenameFilter() {
