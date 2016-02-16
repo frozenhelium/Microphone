@@ -3,6 +3,7 @@ package com.fhx.microphone;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import java.io.File;
@@ -45,6 +47,12 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     //Sets the visibility of FAB button
     public void setButtonVisibility(View v, int id,int visibility){
         FloatingActionButton deleteButton = (FloatingActionButton) v.findViewById(id);
+        if(visibility == View.GONE){
+            deleteButton.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.abc_slide_out_bottom));
+        }
+        else {
+            deleteButton.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.abc_slide_in_bottom));
+        }
         deleteButton.setVisibility(visibility);
     }
 
