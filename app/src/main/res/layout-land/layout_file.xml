@@ -2,12 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:background="@color/selector_recordings"
-    android:layout_marginTop="1dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:layout_marginTop="4dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     android:paddingTop="15dp"
-    android:paddingBottom="15dp"
-    android:elevation="4dp">
+    android:elevation="4dp"
+    android:paddingBottom="15dp">
     <ImageView
         android:id="@+id/file_icon"
         android:src="@mipmap/ic_record_file"
@@ -17,7 +17,7 @@
         android:id="@+id/file_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="30dp"
         android:layout_toRightOf="@id/file_icon"
         android:textColor="@color/colorTextPrimary"
         android:textSize="22sp"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text="raw wave audio file"
         android:textColor="@color/colorTextSecondary"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="30dp"
         android:layout_toRightOf="@id/file_icon"
         android:layout_below="@id/file_name"/>
 </RelativeLayout>

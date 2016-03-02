@@ -1,13 +1,11 @@
 package com.fhx.microphone;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.media.audiofx.BassBoost;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -22,7 +20,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private AudioRecorder mAudioRecorder = null;
@@ -115,6 +112,9 @@ public class MainActivity extends AppCompatActivity {
         mBtnRecord.setIsRecording(true);
         if (mMenuItemRecordings != null) mMenuItemRecordings.setEnabled(false);
         if (mMenuItemSettings != null) mMenuItemSettings.setEnabled(false);
+        if(mRecordingService != null && mRecordingService.isRecording()) {
+            Log.v("MainActivity", "started");
+        }
     }
 
     private void onRecordingStop(){
@@ -122,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
         mBtnRecord.setIsRecording(false);
         if (mMenuItemRecordings != null) mMenuItemRecordings.setEnabled(true);
         if (mMenuItemSettings != null) mMenuItemSettings.setEnabled(true);
+        if(mRecordingService != null && !mRecordingService.isRecording()) {
+            Log.v("MainActivity", "stopped");
+        }
     }
 
     @Override

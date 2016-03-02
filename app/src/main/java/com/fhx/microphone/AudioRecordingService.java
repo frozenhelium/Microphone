@@ -31,9 +31,6 @@ public class AudioRecordingService extends Service {
         }
     }
 
-    public class InvalidPreferenceException extends Exception{
-    }
-
     public interface RecordingStopListener{
         void onRecordingStop();
     }

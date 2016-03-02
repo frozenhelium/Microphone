@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/selected_color" android:state_selected="true"/>
+    <item android:color="@color/colorPrimaryDark"
+        android:state_selected="false"
+        android:drawable="@drawable/recyclerview_item"/>
+    <item android:drawable="@drawable/selected_color"
+        android:state_selected="true"
+        android:color="@color/colorPrimaryLight"/>
 </selector>
