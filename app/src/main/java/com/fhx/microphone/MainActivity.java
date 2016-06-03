@@ -6,6 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -20,6 +23,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private AudioRecorder mAudioRecorder = null;
@@ -154,6 +158,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public static boolean isIntentAvailable(Context ctx, Intent intent) {
+        final PackageManager mgr = ctx.getPackageManager();
+        List<ResolveInfo> list =
+                mgr.queryIntentActivities(intent,
+                        PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_settings){
@@ -161,7 +173,16 @@ public class MainActivity extends AppCompatActivity {
                     SETTINGS_ACTIVITY_REQUEST_CODE);
             return true;
         } else if(item.getItemId() == R.id.action_recordings){
-            startActivity(new Intent(this, RecordingsActivity.class));
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath()
+                    + "/Microphone/");
+            intent.setDataAndType(uri, "resource/folder");
+            if (isIntentAvailable(this.getApplicationContext(),intent)){
+                startActivity(Intent.createChooser(intent, "Open folder"));
+            }
+            else {
+                startActivity(new Intent(this, RecordingsActivity.class));
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
